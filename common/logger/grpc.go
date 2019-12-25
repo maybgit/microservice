@@ -1,12 +1,9 @@
 package logger
 
 import (
-	"github.com/golang/glog"
 	"context"
-	"flag"
-	"fmt"
 	"log"
-	"runtime"
+	"strings"
 	"time"
 
 	"github.com/limitedlee/microservice/common"
@@ -18,7 +15,6 @@ import (
 var logGrpcUrl string
 
 func init() {
-	flag.Set("stderrthreshold", "INFO")
 	//获取项目配置中的数据
 	var err error
 	logGrpcUrl, err = config.Get("LogGrpc")
@@ -26,124 +22,40 @@ func init() {
 		log.Printf("get config info fail: %v", err)
 	}
 }
-func Error(in ...interface{}) {
+
+func writeLog(data string, level int) (r *Reply) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Println(err)
 		}
 	}()
 
-	pc, _, _, _ := runtime.Caller(2)
-	f := runtime.FuncForPC(pc)
+	conn, err := grpc.Dial(logGrpcUrl, grpc.WithInsecure())
+	defer conn.Close()
+	client := NewLogClient(conn)
 
-	pc2, _, _, _ := runtime.Caller(1)
-	f2 := runtime.FuncForPC(pc2)
-	glog.Error(in...)
-	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "ERROR", in)
-}
+	ctx, cf := context.WithTimeout(context.Background(), time.Second*60)
+	defer cf()
 
-func Info(in ...interface{}) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Println(err)
-		}
-	}()
+	sps := strings.Split(data, "]")
 
-	pc, _, _, _ := runtime.Caller(2)
-	f := runtime.FuncForPC(pc)
+	m := LogRequest{}
+	m.Logger = sps[0]
+	m.Appid = common.PbConfig.Grpc.Appid
+	m.Message = strings.Join(sps[1:], "]")
 
-	pc2, _, _, _ := runtime.Caller(1)
-	f2 := runtime.FuncForPC(pc2)
-	glog.Info(in...)
-	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "INFO", in)
-}
-func Fatal(in ...interface{}) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Println(err)
-		}
-	}()
-
-	pc, _, _, _ := runtime.Caller(2)
-	f := runtime.FuncForPC(pc)
-
-	pc2, _, _, _ := runtime.Caller(1)
-	f2 := runtime.FuncForPC(pc2)
-	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "FATAL", in)
-}
-func Warn(in ...interface{}) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Println(err)
-		}
-	}()
-
-	pc, _, _, _ := runtime.Caller(2)
-	f := runtime.FuncForPC(pc)
-
-	pc2, _, _, _ := runtime.Caller(1)
-	f2 := runtime.FuncForPC(pc2)
-	//glog.Warning
-	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "WARN", in)
-}
-
-func writeLog(logger string, level string, in []interface{}) (r *Reply) {
-	for {
-		err := func() (err error) {
-			defer func() {
-				if err := recover(); err != nil {
-					log.Println(err)
-				}
-			}()
-
-			var conn *grpc.ClientConn
-			conn, err = grpc.Dial(logGrpcUrl, grpc.WithInsecure())
-			if err != nil {
-				return err
-			}
-			defer conn.Close()
-			client := NewLogClient(conn)
-
-			ctx, cf := context.WithTimeout(context.Background(), time.Second*60)
-			defer cf()
-
-			m := LogRequest{}
-			m.Logger = logger
-			m.Appid = common.PbConfig.Grpc.Appid
-
-			for _, v := range in {
-				switch v.(type) {
-				case string:
-					m.Message += v.(string)
-				case runtime.Error:
-					m.Exception = v.(runtime.Error).Error()
-				case error:
-					m.Exception = v.(error).Error()
-				default:
-					m.Exception = fmt.Sprintf("%T - ", v) + fmt.Sprintf("%v", v)
-				}
-			}
-
-			switch level {
-			case "ERROR":
-				r, err = client.Error(ctx, &m)
-			case "INFO":
-				r, err = client.Info(ctx, &m)
-			case "WARN":
-				r, err = client.Warn(ctx, &m)
-			case "FATAL":
-				r, err = client.Fatal(ctx, &m)
-			}
-			return
-		}()
-
-		if err != nil {
-			log.Printf("%v\n", err)
-			break
-			//time.Sleep(time.Second * 3)
-		} else {
-			break
-		}
+	switch level {
+	case 0:
+		r, err = client.Info(ctx, &m)
+	case 1:
+		r, err = client.Warn(ctx, &m)
+	case 2:
+		r, err = client.Error(ctx, &m)
+	case 3:
+		r, err = client.Fatal(ctx, &m)
 	}
-	return r
+	if err != nil {
+		panic(err)
+	}
+	return
 }
