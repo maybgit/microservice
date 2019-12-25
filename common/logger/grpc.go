@@ -1,12 +1,15 @@
 package logger
 
 import (
+	"github.com/golang/glog"
 	"context"
+	"flag"
 	"fmt"
-	"github.com/limitedlee/microservice/common"
 	"log"
 	"runtime"
 	"time"
+
+	"github.com/limitedlee/microservice/common"
 
 	"github.com/limitedlee/microservice/common/config"
 	"google.golang.org/grpc"
@@ -15,6 +18,7 @@ import (
 var logGrpcUrl string
 
 func init() {
+	flag.Set("stderrthreshold", "INFO")
 	//获取项目配置中的数据
 	var err error
 	logGrpcUrl, err = config.Get("LogGrpc")
@@ -34,7 +38,7 @@ func Error(in ...interface{}) {
 
 	pc2, _, _, _ := runtime.Caller(1)
 	f2 := runtime.FuncForPC(pc2)
-
+	glog.Error(in...)
 	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "ERROR", in)
 }
 
@@ -50,7 +54,7 @@ func Info(in ...interface{}) {
 
 	pc2, _, _, _ := runtime.Caller(1)
 	f2 := runtime.FuncForPC(pc2)
-
+	glog.Info(in...)
 	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "INFO", in)
 }
 func Fatal(in ...interface{}) {
@@ -79,7 +83,7 @@ func Warn(in ...interface{}) {
 
 	pc2, _, _, _ := runtime.Caller(1)
 	f2 := runtime.FuncForPC(pc2)
-
+	//glog.Warning
 	go writeLog(fmt.Sprintf("%v => %v", f.Name(), f2.Name()), "WARN", in)
 }
 

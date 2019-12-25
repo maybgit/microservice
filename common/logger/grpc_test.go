@@ -22,3 +22,7 @@ func TestLog(t *testing.T) {
 	wg.Wait()
 	time.Sleep(time.Second * 3)
 }
+
+func Test_glog(t *testing.T) {
+
+}
