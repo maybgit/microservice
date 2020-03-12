@@ -4,6 +4,11 @@ import (
 	"context"
 	"crypto/rsa"
 	"fmt"
+	"log"
+	"net/http"
+	"runtime/debug"
+	"strings"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/maybgit/glog"
 	"github.com/maybgit/microservice/common/config"
@@ -14,10 +19,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"log"
-	"net/http"
-	"runtime/debug"
-	"strings"
 )
 
 type MicService struct {
@@ -39,7 +40,11 @@ func (m *MicService) Start() {
 	items := strings.Split(baseUrl, ":")
 	addr := fmt.Sprintf(":%v", items[len(items)-1])
 
-	http.ListenAndServe(addr, grpcHandleFunc(m.GrpcServer, mux))
+	if err := http.ListenAndServe(addr, grpcHandleFunc(m.GrpcServer, mux)); err != nil {
+		glog.Error(err)
+	} else {
+		glog.Info("服务启动失败")
+	}
 }
 
 func grpcHandleFunc(grpcServer *grpc.Server, otherHander http.Handler) http.Handler {
