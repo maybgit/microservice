@@ -5,15 +5,15 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/limitedlee/microservice/common/config"
-	jw "github.com/limitedlee/microservice/common/jwt"
+	"github.com/maybgit/glog"
+	"github.com/maybgit/microservice/common/config"
+	jw "github.com/maybgit/microservice/common/jwt"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"github.com/maybgit/glog"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -35,7 +35,7 @@ func (m *MicService) Start() {
 	})
 
 	baseUrl, _ := config.Get("BaseUrl")
-	glog.Info("baseUrl ",baseUrl)
+	glog.Info("baseUrl ", baseUrl)
 	items := strings.Split(baseUrl, ":")
 	addr := fmt.Sprintf(":%v", items[len(items)-1])
 

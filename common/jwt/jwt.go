@@ -4,7 +4,7 @@ import (
 	"crypto/rsa"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/limitedlee/microservice/common/config"
+	"github.com/maybgit/microservice/common/config"
 	"io/ioutil"
 	"log"
 	"os"

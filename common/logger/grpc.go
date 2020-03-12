@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/limitedlee/microservice/common"
+	"github.com/maybgit/microservice/common"
 
-	"github.com/limitedlee/microservice/common/config"
+	"github.com/maybgit/microservice/common/config"
 	"google.golang.org/grpc"
 )
 

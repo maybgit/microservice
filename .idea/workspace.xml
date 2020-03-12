@@ -78,29 +78,29 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/limitedlee/microservice/example/service">
-    <configuration name="go build github.com/limitedlee/microservice" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Build.go build github.com/maybgit/microservice/example/service">
+    <configuration name="go build github.com/maybgit/microservice" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
       <module name="microservice" />
       <working_directory value="$PROJECT_DIR$/" />
       <go_parameters value="-i" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
-      <package value="github.com/limitedlee/microservice" />
+      <package value="github.com/maybgit/microservice" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/limitedlee/microservice/example/service" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/maybgit/microservice/example/service" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="microservice" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/example/service/main.go" />
-      <package value="github.com/limitedlee/microservice/example/service" />
+      <package value="github.com/maybgit/microservice/example/service" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/limitedlee/microservice/example/service" />
+        <item itemvalue="Go Build.go build github.com/maybgit/microservice/example/service" />
       </list>
     </recent_temporary>
   </component>

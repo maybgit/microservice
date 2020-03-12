@@ -1,4 +1,4 @@
-module github.com/limitedlee/microservice
+module github.com/maybgit/microservice
 
 go 1.12
 

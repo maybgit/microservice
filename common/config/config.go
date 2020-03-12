@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
-	"github.com/limitedlee/microservice/common"
+	"github.com/maybgit/microservice/common"
 	"google.golang.org/grpc"
 	"log"
 	"os"

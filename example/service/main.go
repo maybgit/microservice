@@ -1,8 +1,8 @@
 package main
 
 import (
-	pb "github.com/limitedlee/microservice/example/proto"
-	"github.com/limitedlee/microservice/micro"
+	pb "github.com/maybgit/microservice/example/proto"
+	"github.com/maybgit/microservice/micro"
 )
 
 func main() {
