@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"github.com/maybgit/glog"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -34,6 +35,7 @@ func (m *MicService) Start() {
 	})
 
 	baseUrl, _ := config.Get("BaseUrl")
+	glog.Info("baseUrl ",baseUrl)
 	items := strings.Split(baseUrl, ":")
 	addr := fmt.Sprintf(":%v", items[len(items)-1])
 
